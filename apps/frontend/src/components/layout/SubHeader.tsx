@@ -18,7 +18,9 @@ export const SubHeader = ({ title, children }: SubHeaderProps) => {
       borderBottom="1px solid black"
     >
       <Box display="flex" alignItems="center" gap={4}>
-        <Text fontSize="lg">{title}</Text>
+        <Text fontSize="lg" fontWeight="bold">
+          {title}
+        </Text>
       </Box>
       {children}
     </Box>

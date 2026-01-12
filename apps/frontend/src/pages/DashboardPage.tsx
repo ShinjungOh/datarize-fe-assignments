@@ -16,6 +16,7 @@ import { useCustomers } from '@/hooks/useCustomers';
 import { useCustomerPurchases } from '@/hooks/useCustomerPurchases';
 import { dateUtils } from '@/utils/dateUtils';
 import { DEFAULT_FROM_DATE, DEFAULT_TO_DATE } from '@/constants/date';
+import { useEffect } from 'react';
 
 export const DashboardPage = () => {
   const { from, to, setFrom, setTo } = useDateRange({
@@ -55,6 +56,10 @@ export const DashboardPage = () => {
     await fetchPurchaseFrequency({ from: fromDateString, to: toDateString });
     await fetchCustomers(1);
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, []);
 
   return (
     <Layout>

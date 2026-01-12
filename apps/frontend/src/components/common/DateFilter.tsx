@@ -45,7 +45,7 @@ export const DateFilter = ({ from, to, onFromChange, onToChange, onSearch }: Dat
           <Popover.Positioner>
             <Popover.Content>
               <Popover.Body>
-                <DayPicker mode="single" selected={from} onSelect={handleFromSelect} locale={ko} />
+                <DayPicker mode="single" selected={from} onSelect={handleFromSelect} locale={ko} defaultMonth={from} />
               </Popover.Body>
             </Popover.Content>
           </Popover.Positioner>
@@ -67,6 +67,7 @@ export const DateFilter = ({ from, to, onFromChange, onToChange, onSearch }: Dat
                   selected={to}
                   onSelect={handleToSelect}
                   locale={ko}
+                  defaultMonth={to}
                   disabled={from ? { before: from } : undefined}
                 />
               </Popover.Body>
