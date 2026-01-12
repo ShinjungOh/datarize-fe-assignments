@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Box, Stack } from '@chakra-ui/react';
 import { Layout } from '@/components/layout/Layout';
 import { SubHeader } from '@/components/layout/SubHeader';
@@ -16,7 +17,6 @@ import { useCustomers } from '@/hooks/useCustomers';
 import { useCustomerPurchases } from '@/hooks/useCustomerPurchases';
 import { dateUtils } from '@/utils/dateUtils';
 import { DEFAULT_FROM_DATE, DEFAULT_TO_DATE } from '@/constants/date';
-import { useEffect } from 'react';
 
 export const DashboardPage = () => {
   const { from, to, setFrom, setTo } = useDateRange({
@@ -88,6 +88,7 @@ export const DashboardPage = () => {
             {selectedCustomerId ? (
               <CustomerPurchasesSection
                 customerId={selectedCustomerId}
+                customerName={customers.find((customer) => customer.id === selectedCustomerId)?.name ?? ''}
                 data={customerPurchases}
                 onThumbnailClick={handleThumbnailClick}
               />
