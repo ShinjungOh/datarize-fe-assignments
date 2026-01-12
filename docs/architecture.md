@@ -21,3 +21,6 @@
 - ESLint
 - Prettier
 - Husky (pre-commit)
+
+### Date Picker
+- react-day-picker
