@@ -16,10 +16,10 @@
 - [x] eslint, prettier, husky 설정
 
 ### 3. 서버 API 연동
-- [ ] axios api instance
-- [ ] 서버 데이터 타입 정의
-- [ ] 도메인 별 API 함수 구현
-- [ ] API 호출 테스트
+- [x] axios api instance
+- [x] 서버 데이터 타입 정의
+- [x] 도메인 별 API 함수 구현
+- [x] API 호출 테스트
 
 ### 4. 레이아웃 구현
 
