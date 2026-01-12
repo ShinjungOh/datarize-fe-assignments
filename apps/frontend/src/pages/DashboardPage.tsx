@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Box, ButtonGroup, Flex, IconButton, Pagination, Stack, Table, Text } from '@chakra-ui/react';
+import { ChangeEvent, useState } from 'react';
+import { Box, Button, ButtonGroup, Flex, IconButton, Input, Pagination, Stack, Table, Text } from '@chakra-ui/react';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import { Layout } from '@/components/layout/Layout';
 import { SubHeader } from '@/components/layout/SubHeader';
@@ -19,6 +19,8 @@ export const DashboardPage = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [pagination, setPagination] = useState<PaginationType | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchName, setSearchName] = useState('');
+  const [sortBy, setSortBy] = useState<'id' | 'asc' | 'desc'>('id');
 
   const { from, to, setFrom, setTo } = useDateRange({
     initialFrom: '2025-10-01',
@@ -31,20 +33,34 @@ export const DashboardPage = () => {
     handleDownloadCsv,
   } = usePurchaseFrequency({ from, to });
 
-  const fetchCustomers = async (page: number) => {
+  const fetchCustomers = async (page: number, name?: string, sort?: 'id' | 'asc' | 'desc') => {
     if (!from || !to) return;
     const fromDateString = dateUtils.formatDate(from);
     const toDateString = dateUtils.formatDate(to);
 
+    const sortValue = sort ?? sortBy;
+
     const customersResponse = await getCustomers({
       from: fromDateString,
       to: toDateString,
-      sortBy: 'desc',
+      sortBy: sortValue === 'id' ? undefined : sortValue,
+      name: name ?? (searchName || undefined),
       page,
     });
 
     setCustomers(customersResponse.data);
     setPagination(customersResponse.pagination);
+  };
+
+  const handleNameSearch = () => {
+    setCurrentPage(1);
+    fetchCustomers(1, searchName);
+  };
+
+  const handleSort = (sort: 'id' | 'asc' | 'desc') => {
+    setSortBy(sort);
+    setCurrentPage(1);
+    fetchCustomers(1, searchName, sort);
   };
 
   const handleSearch = async () => {
@@ -62,6 +78,10 @@ export const DashboardPage = () => {
     fetchCustomers(details.page);
   };
 
+  const handleChangeCustomerNameInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchName(e.target.value);
+  };
+
   return (
     <Layout>
       <SubHeader title="대시보드">
@@ -69,6 +89,25 @@ export const DashboardPage = () => {
       </SubHeader>
       <Box display="flex" flex={1} overflow="hidden">
         <Sidebar>
+          {/* TODO: 검색 영역 분리 */}
+          <Flex pt={4} px={4} gap={2} alignItems="center">
+            <Input placeholder="검색할 이름을 입력하세요" value={searchName} onChange={handleChangeCustomerNameInput} />
+            <Button size="md" onClick={handleNameSearch}>
+              검색
+            </Button>
+          </Flex>
+          <Flex p={2} gap={2} justifyContent="center" alignItems="center">
+            <Button size="sm" onClick={() => handleSort('id')} variant={sortBy === 'id' ? 'solid' : 'outline'}>
+              ID순
+            </Button>
+            <Button size="sm" onClick={() => handleSort('desc')} variant={sortBy === 'desc' ? 'solid' : 'outline'}>
+              높은금액순
+            </Button>
+            <Button size="sm" onClick={() => handleSort('asc')} variant={sortBy === 'asc' ? 'solid' : 'outline'}>
+              낮은금액순
+            </Button>
+          </Flex>
+
           {/* TODO: 고객 목록 분리 */}
           <Stack p={4} flex={1} overflow="auto">
             <Flex justifyContent="space-between" alignItems="center">
@@ -100,6 +139,7 @@ export const DashboardPage = () => {
               </Table.Body>
             </Table.Root>
           </Stack>
+
           {/* TODO: 페이지네이션 분리 */}
           <Box p={2} borderTop="1px solid" borderColor="gray.200">
             <Pagination.Root
