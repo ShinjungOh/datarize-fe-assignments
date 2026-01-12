@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Box, Flex, Stack, Table, Text } from '@chakra-ui/react';
+import { Box, ButtonGroup, Flex, IconButton, Pagination, Stack, Table, Text } from '@chakra-ui/react';
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import { Layout } from '@/components/layout/Layout';
 import { SubHeader } from '@/components/layout/SubHeader';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -11,12 +12,13 @@ import { useDateRange } from '@/hooks/useDateRange';
 import { usePurchaseFrequency } from '@/hooks/usePurchaseFrequency';
 import { dateUtils } from '@/utils/dateUtils';
 import { getCustomers } from '@/api/customer.api';
-import { Customer, Pagination } from '@/types/customer.type';
+import { Customer, Pagination as PaginationType } from '@/types/customer.type';
 import { numberUtils } from '@/utils/numberUtils';
 
 export const DashboardPage = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [pagination, setPagination] = useState<PaginationType | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { from, to, setFrom, setTo } = useDateRange({
     initialFrom: '2025-10-01',
@@ -29,16 +31,35 @@ export const DashboardPage = () => {
     handleDownloadCsv,
   } = usePurchaseFrequency({ from, to });
 
+  const fetchCustomers = async (page: number) => {
+    if (!from || !to) return;
+    const fromDateString = dateUtils.formatDate(from);
+    const toDateString = dateUtils.formatDate(to);
+
+    const customersResponse = await getCustomers({
+      from: fromDateString,
+      to: toDateString,
+      sortBy: 'desc',
+      page,
+    });
+
+    setCustomers(customersResponse.data);
+    setPagination(customersResponse.pagination);
+  };
+
   const handleSearch = async () => {
     if (!from || !to) return;
     const fromDateString = dateUtils.formatDate(from);
     const toDateString = dateUtils.formatDate(to);
 
     await fetchPurchaseFrequency({ from: fromDateString, to: toDateString });
+    setCurrentPage(1);
+    await fetchCustomers(1);
+  };
 
-    const customersResponse = await getCustomers({ from: fromDateString, to: toDateString, sortBy: 'desc' });
-    setCustomers(customersResponse.data);
-    setPagination(customersResponse.pagination);
+  const handlePageChange = (details: { page: number }) => {
+    setCurrentPage(details.page);
+    fetchCustomers(details.page);
   };
 
   return (
@@ -49,10 +70,7 @@ export const DashboardPage = () => {
       <Box display="flex" flex={1} overflow="hidden">
         <Sidebar>
           {/* TODO: 고객 목록 분리 */}
-          <Text fontSize="lg" fontWeight="semibold">
-            고객 목록
-          </Text>
-          <Stack bg="white" p={4}>
+          <Stack p={4} flex={1} overflow="auto">
             <Flex justifyContent="space-between" alignItems="center">
               <Text fontSize="sm" color="gray.600">
                 전체 {pagination?.total ?? 0}명
@@ -82,6 +100,33 @@ export const DashboardPage = () => {
               </Table.Body>
             </Table.Root>
           </Stack>
+          {/* TODO: 페이지네이션 분리 */}
+          <Box p={2} borderTop="1px solid" borderColor="gray.200">
+            <Pagination.Root
+              count={pagination?.total ?? 0}
+              pageSize={pagination?.limit ?? 10}
+              page={currentPage}
+              onPageChange={handlePageChange}
+            >
+              <ButtonGroup variant="ghost" size="sm" w="100%" justifyContent="center">
+                <Pagination.PrevTrigger asChild>
+                  <IconButton>
+                    <LuChevronLeft />
+                  </IconButton>
+                </Pagination.PrevTrigger>
+                <Pagination.Items
+                  render={(page) => (
+                    <IconButton variant={{ base: 'ghost', _selected: 'outline' }}>{page.value}</IconButton>
+                  )}
+                />
+                <Pagination.NextTrigger asChild>
+                  <IconButton>
+                    <LuChevronRight />
+                  </IconButton>
+                </Pagination.NextTrigger>
+              </ButtonGroup>
+            </Pagination.Root>
+          </Box>
         </Sidebar>
         <Main>
           <Stack gap={4}>
