@@ -70,7 +70,12 @@ export const DashboardPage = () => {
             onNameSearch={handleNameSearch}
             onSort={handleSort}
           />
-          <CustomerListTable customers={customers} pagination={pagination} onCustomerClick={handleCustomerClick} />
+          <CustomerListTable
+            customers={customers}
+            pagination={pagination}
+            searchName={searchName}
+            onCustomerClick={handleCustomerClick}
+          />
           <CustomerPagination pagination={pagination} currentPage={currentPage} onPageChange={handlePageChange} />
         </Sidebar>
         <Main>
