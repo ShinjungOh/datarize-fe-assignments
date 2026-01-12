@@ -43,10 +43,11 @@ export const DashboardPage = () => {
     handleSearchNameChange,
   } = useCustomers({ from, to });
 
-  const { selectedCustomerId, customerPurchases, handleCustomerClick, handleThumbnailClick } = useCustomerPurchases({
-    from,
-    to,
-  });
+  const { selectedCustomerId, customerPurchases, handleCustomerClick, handleThumbnailClick, handleBackClick } =
+    useCustomerPurchases({
+      from,
+      to,
+    });
 
   const handleSearch = async () => {
     if (!from || !to) return;
@@ -91,6 +92,7 @@ export const DashboardPage = () => {
                 customerName={customers.find((customer) => customer.id === selectedCustomerId)?.name ?? ''}
                 data={customerPurchases}
                 onThumbnailClick={handleThumbnailClick}
+                onBackClick={handleBackClick}
               />
             ) : (
               <>

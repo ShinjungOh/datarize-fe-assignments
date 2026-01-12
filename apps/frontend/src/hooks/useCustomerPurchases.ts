@@ -31,10 +31,16 @@ export const useCustomerPurchases = ({ from, to }: UseCustomerPurchasesParams) =
     window.open(imgSrc, '_blank');
   };
 
+  const handleBackClick = () => {
+    setSelectedCustomerId(null);
+    setCustomerPurchases([]);
+  };
+
   return {
     selectedCustomerId,
     customerPurchases,
     handleCustomerClick,
     handleThumbnailClick,
+    handleBackClick,
   };
 };

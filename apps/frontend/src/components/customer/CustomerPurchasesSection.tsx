@@ -12,6 +12,7 @@ type CustomerPurchasesSectionProps = {
   customerName: string;
   data: CustomerPurchase[];
   onThumbnailClick: (imgSrc: string) => void;
+  onBackClick: () => void;
 };
 
 export const CustomerPurchasesSection = ({
@@ -19,19 +20,16 @@ export const CustomerPurchasesSection = ({
   customerName,
   data,
   onThumbnailClick,
+  onBackClick,
 }: CustomerPurchasesSectionProps) => {
   const totalAmount = data.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const handleBackClick = () => {
-    window.history.back();
-  };
-
   return (
     <Stack gap={4} p={4}>
-      <Flex align="center" gap={1} cursor="pointer" onClick={handleBackClick}>
+      <Flex align="center" gap={1} cursor="pointer" onClick={onBackClick}>
         <LuChevronLeft color={colors.gray4} />
         <Text fontSize="md" color={colors.gray4}>
-          이전으로
+          목록으로
         </Text>
       </Flex>
 
