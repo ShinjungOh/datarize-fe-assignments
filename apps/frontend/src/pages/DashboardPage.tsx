@@ -1,4 +1,3 @@
-import { ChangeEvent, useState } from 'react';
 import { Box, Stack } from '@chakra-ui/react';
 import { Layout } from '@/components/layout/Layout';
 import { SubHeader } from '@/components/layout/SubHeader';
@@ -12,20 +11,14 @@ import { PurchaseFrequencyChartSection } from '@/components/purchase/PurchaseFre
 import { PurchaseFrequencyTableSection } from '@/components/purchase/PurchaseFrequencyTableSection';
 import { useDateRange } from '@/hooks/useDateRange';
 import { usePurchaseFrequency } from '@/hooks/usePurchaseFrequency';
+import { useCustomers } from '@/hooks/useCustomers';
 import { dateUtils } from '@/utils/dateUtils';
-import { getCustomers } from '@/api/customer.api';
-import { Customer, Pagination as PaginationType } from '@/types/customer.type';
+import { DEFAULT_FROM_DATE, DEFAULT_TO_DATE } from '@/constants/date';
 
 export const DashboardPage = () => {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [pagination, setPagination] = useState<PaginationType | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchName, setSearchName] = useState('');
-  const [sortBy, setSortBy] = useState<'id' | 'asc' | 'desc'>('id');
-
   const { from, to, setFrom, setTo } = useDateRange({
-    initialFrom: '2025-10-01',
-    initialTo: '2025-12-31',
+    initialFrom: DEFAULT_FROM_DATE,
+    initialTo: DEFAULT_TO_DATE,
   });
 
   const {
@@ -34,35 +27,18 @@ export const DashboardPage = () => {
     handleDownloadCsv,
   } = usePurchaseFrequency({ from, to });
 
-  const fetchCustomers = async (page: number, name?: string, sort?: 'id' | 'asc' | 'desc') => {
-    if (!from || !to) return;
-    const fromDateString = dateUtils.formatDate(from);
-    const toDateString = dateUtils.formatDate(to);
-
-    const sortValue = sort ?? sortBy;
-
-    const customersResponse = await getCustomers({
-      from: fromDateString,
-      to: toDateString,
-      sortBy: sortValue === 'id' ? undefined : sortValue,
-      name: name ?? (searchName || undefined),
-      page,
-    });
-
-    setCustomers(customersResponse.data);
-    setPagination(customersResponse.pagination);
-  };
-
-  const handleNameSearch = () => {
-    setCurrentPage(1);
-    fetchCustomers(1, searchName);
-  };
-
-  const handleSort = (sort: 'id' | 'asc' | 'desc') => {
-    setSortBy(sort);
-    setCurrentPage(1);
-    fetchCustomers(1, searchName, sort);
-  };
+  const {
+    customers,
+    pagination,
+    currentPage,
+    searchName,
+    sortBy,
+    fetchCustomers,
+    handleNameSearch,
+    handleSort,
+    handlePageChange,
+    handleSearchNameChange,
+  } = useCustomers({ from, to });
 
   const handleSearch = async () => {
     if (!from || !to) return;
@@ -70,17 +46,7 @@ export const DashboardPage = () => {
     const toDateString = dateUtils.formatDate(to);
 
     await fetchPurchaseFrequency({ from: fromDateString, to: toDateString });
-    setCurrentPage(1);
     await fetchCustomers(1);
-  };
-
-  const handlePageChange = (details: { page: number }) => {
-    setCurrentPage(details.page);
-    fetchCustomers(details.page);
-  };
-
-  const handleChangeCustomerNameInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchName(e.target.value);
   };
 
   return (
@@ -93,7 +59,7 @@ export const DashboardPage = () => {
           <CustomerSearchSection
             searchName={searchName}
             sortBy={sortBy}
-            onSearchNameChange={handleChangeCustomerNameInput}
+            onSearchNameChange={handleSearchNameChange}
             onNameSearch={handleNameSearch}
             onSort={handleSort}
           />

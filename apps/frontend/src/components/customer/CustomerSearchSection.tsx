@@ -1,12 +1,13 @@
 import { ChangeEvent } from 'react';
 import { Button, Flex, Input } from '@chakra-ui/react';
+import { SortType } from '@/types/customer.type';
 
 type CustomerSearchSectionProps = {
   searchName: string;
-  sortBy: 'id' | 'asc' | 'desc';
+  sortBy: SortType;
   onSearchNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onNameSearch: () => void;
-  onSort: (sort: 'id' | 'asc' | 'desc') => void;
+  onSort: (sort: SortType) => void;
 };
 
 export const CustomerSearchSection = ({

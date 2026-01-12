@@ -7,6 +7,8 @@ export type CustomersParams = {
   to?: string;
 };
 
+export type SortType = 'id' | 'asc' | 'desc';
+
 export type Customer = {
   id: number;
   name: string;
