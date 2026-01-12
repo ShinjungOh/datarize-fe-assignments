@@ -9,11 +9,11 @@
 ### 1. 요구사항 분석 및 설계
 - [x] 대시보드 와이어프레임 작성
 - [x] 기능 명세서 작성
-- [ ] 프로젝트 구조 설계
+- [x] 프로젝트 구조 설계
 
 ### 2. 환경 설정
-- [ ] 라이브러리 설치
-- [ ] eslint, prettier, husky 설정
+- [x] 라이브러리 설치
+- [x] eslint, prettier, husky 설정
 
 ### 3. 서버 API 연동
 - [ ] axios api instance
