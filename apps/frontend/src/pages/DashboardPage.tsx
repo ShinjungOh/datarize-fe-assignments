@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Box, Stack } from '@chakra-ui/react';
 import { Layout } from '@/components/layout/Layout';
 import { SubHeader } from '@/components/layout/SubHeader';
@@ -10,19 +9,15 @@ import { CustomerListTable } from '@/components/customer/CustomerListTable';
 import { CustomerPagination } from '@/components/customer/CustomerPagination';
 import { PurchaseFrequencyChartSection } from '@/components/purchase/PurchaseFrequencyChartSection';
 import { PurchaseFrequencyTableSection } from '@/components/purchase/PurchaseFrequencyTableSection';
-import { CustomerDetailsSection } from '@/components/customer/CustomerDetailsSection';
+import { CustomerPurchasesSection } from '@/components/customer/CustomerPurchasesSection';
 import { useDateRange } from '@/hooks/useDateRange';
 import { usePurchaseFrequency } from '@/hooks/usePurchaseFrequency';
 import { useCustomers } from '@/hooks/useCustomers';
+import { useCustomerPurchases } from '@/hooks/useCustomerPurchases';
 import { dateUtils } from '@/utils/dateUtils';
 import { DEFAULT_FROM_DATE, DEFAULT_TO_DATE } from '@/constants/date';
-import { getCustomersPurchases } from '@/api/customer.api';
-import { CustomerPurchase } from '@/types/customer.type';
 
 export const DashboardPage = () => {
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
-  const [customerPurchases, setCustomerPurchases] = useState<CustomerPurchase[]>([]);
-
   const { from, to, setFrom, setTo } = useDateRange({
     initialFrom: DEFAULT_FROM_DATE,
     initialTo: DEFAULT_TO_DATE,
@@ -47,6 +42,11 @@ export const DashboardPage = () => {
     handleSearchNameChange,
   } = useCustomers({ from, to });
 
+  const { selectedCustomerId, customerPurchases, handleCustomerClick, handleThumbnailClick } = useCustomerPurchases({
+    from,
+    to,
+  });
+
   const handleSearch = async () => {
     if (!from || !to) return;
     const fromDateString = dateUtils.formatDate(from);
@@ -54,25 +54,6 @@ export const DashboardPage = () => {
 
     await fetchPurchaseFrequency({ from: fromDateString, to: toDateString });
     await fetchCustomers(1);
-  };
-
-  const handleCustomerClick = async (customerId: number) => {
-    if (!from || !to) return;
-    const fromDateString = dateUtils.formatDate(from);
-    const toDateString = dateUtils.formatDate(to);
-
-    setSelectedCustomerId(customerId);
-
-    const purchasesResponse = await getCustomersPurchases(customerId, {
-      from: fromDateString,
-      to: toDateString,
-    });
-
-    setCustomerPurchases(purchasesResponse);
-  };
-
-  const handleThumbnailClick = (imgSrc: string) => {
-    window.open(imgSrc, '_blank');
   };
 
   return (
@@ -95,7 +76,7 @@ export const DashboardPage = () => {
         <Main>
           <Stack gap={4}>
             {selectedCustomerId ? (
-              <CustomerDetailsSection
+              <CustomerPurchasesSection
                 customerId={selectedCustomerId}
                 data={customerPurchases}
                 onThumbnailClick={handleThumbnailClick}

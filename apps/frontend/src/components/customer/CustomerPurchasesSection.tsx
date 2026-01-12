@@ -2,17 +2,17 @@ import { Image, Stack, Table, Text } from '@chakra-ui/react';
 import { numberUtils } from '@/utils/numberUtils';
 import { CustomerPurchase } from '@/types/customer.type';
 
-type CustomerDetailsSectionProps = {
+type CustomerPurchasesSectionProps = {
   customerId: number;
   data: CustomerPurchase[];
   onThumbnailClick: (imgSrc: string) => void;
 };
 
-export const CustomerDetailsSection = ({ customerId, data, onThumbnailClick }: CustomerDetailsSectionProps) => {
+export const CustomerPurchasesSection = ({ customerId, data, onThumbnailClick }: CustomerPurchasesSectionProps) => {
   return (
     <Stack gap={4} p={6} bg="white">
       <Text fontSize="lg" fontWeight="semibold">
-        고객 ID {customerId} 상세 구매 내역
+        고객 ID {customerId} 상세 구매 내역 (총 {data.length}건)
       </Text>
       <Table.Root size="sm" variant="line">
         <Table.Header>
