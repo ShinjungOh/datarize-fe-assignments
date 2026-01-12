@@ -1,6 +1,7 @@
 import { Image, Stack, Table, Text } from '@chakra-ui/react';
 import { EmptyState } from '@/components/common/EmptyState';
 import { EMPTY_MESSAGES } from '@/constants/messages';
+import { colors } from '@/theme/theme';
 import { numberUtils } from '@/utils/numberUtils';
 import { CustomerPurchase } from '@/types/customer.type';
 
@@ -21,7 +22,7 @@ export const CustomerPurchasesSection = ({ customerId, data, onThumbnailClick }:
       ) : (
         <Table.Root size="sm" variant="line">
           <Table.Header>
-            <Table.Row bg="gray.50">
+            <Table.Row bg={colors.gray1}>
               <Table.ColumnHeader>구매날짜</Table.ColumnHeader>
               <Table.ColumnHeader>제품</Table.ColumnHeader>
               <Table.ColumnHeader>제품명</Table.ColumnHeader>

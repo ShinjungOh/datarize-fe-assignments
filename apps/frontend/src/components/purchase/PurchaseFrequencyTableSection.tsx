@@ -1,6 +1,7 @@
 import { Button, Flex, Stack, Table, Text } from '@chakra-ui/react';
 import { EmptyState } from '@/components/common/EmptyState';
 import { EMPTY_MESSAGES } from '@/constants/messages';
+import { colors } from '@/theme/theme';
 import { PurchaseFrequency } from '@/types/purchase.type';
 import { purchaseUtils } from '@/utils/purchaseUtils';
 import { numberUtils } from '@/utils/numberUtils';
@@ -12,7 +13,7 @@ type PurchaseFrequencyTableSectionProps = {
 
 export const PurchaseFrequencyTableSection = ({ data, onDownloadCsv }: PurchaseFrequencyTableSectionProps) => {
   return (
-    <Stack gap={4} p={6} minH="500px" bg="white">
+    <Stack gap={4} p={6} minH="500px" bg="white" borderRadius="md" boxShadow="xs">
       <Flex justifyContent="space-between" alignItems="center">
         <Text fontSize="lg" fontWeight="semibold">
           상세 데이터
@@ -27,7 +28,7 @@ export const PurchaseFrequencyTableSection = ({ data, onDownloadCsv }: PurchaseF
         <Stack gap="10">
           <Table.Root size="sm" variant="line">
             <Table.Header>
-              <Table.Row bg="gray.50">
+              <Table.Row bg={colors.gray1}>
                 <Table.ColumnHeader>가격대</Table.ColumnHeader>
                 <Table.ColumnHeader textAlign="end">구매 건수</Table.ColumnHeader>
               </Table.Row>

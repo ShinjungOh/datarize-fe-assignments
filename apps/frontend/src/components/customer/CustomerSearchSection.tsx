@@ -1,6 +1,7 @@
 import { ChangeEvent } from 'react';
 import { Button, Flex, Input } from '@chakra-ui/react';
 import { SortType } from '@/types/customer.type';
+import { colors } from '@/theme/theme';
 
 type CustomerSearchSectionProps = {
   searchName: string;
@@ -26,13 +27,28 @@ export const CustomerSearchSection = ({
         </Button>
       </Flex>
       <Flex p={2} gap={2} justifyContent="center" alignItems="center">
-        <Button size="sm" onClick={() => onSort('id')} variant={sortBy === 'id' ? 'solid' : 'outline'}>
+        <Button
+          size="sm"
+          onClick={() => onSort('id')}
+          variant={sortBy === 'id' ? 'solid' : 'outline'}
+          bg={sortBy === 'id' ? colors.secondary : undefined}
+        >
           ID순
         </Button>
-        <Button size="sm" onClick={() => onSort('desc')} variant={sortBy === 'desc' ? 'solid' : 'outline'}>
+        <Button
+          size="sm"
+          onClick={() => onSort('desc')}
+          variant={sortBy === 'desc' ? 'solid' : 'outline'}
+          bg={sortBy === 'desc' ? colors.secondary : undefined}
+        >
           높은금액순
         </Button>
-        <Button size="sm" onClick={() => onSort('asc')} variant={sortBy === 'asc' ? 'solid' : 'outline'}>
+        <Button
+          size="sm"
+          onClick={() => onSort('asc')}
+          variant={sortBy === 'asc' ? 'solid' : 'outline'}
+          bg={sortBy === 'asc' ? colors.secondary : undefined}
+        >
           낮은금액순
         </Button>
       </Flex>

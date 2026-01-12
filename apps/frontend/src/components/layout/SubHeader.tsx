@@ -1,5 +1,6 @@
 import { Box, Text } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
+import { colors } from '@/theme/theme';
 
 type SubHeaderProps = {
   title: string;
@@ -15,7 +16,8 @@ export const SubHeader = ({ title, children }: SubHeaderProps) => {
       alignItems="center"
       justifyContent="space-between"
       px={6}
-      borderBottom="1px solid black"
+      borderBottom="1px solid"
+      borderColor={colors.gray2}
     >
       <Box display="flex" alignItems="center" gap={4}>
         <Text fontSize="lg" fontWeight="bold">

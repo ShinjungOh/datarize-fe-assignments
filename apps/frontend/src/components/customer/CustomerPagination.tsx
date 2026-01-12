@@ -1,6 +1,7 @@
 import { Box, ButtonGroup, IconButton, Pagination } from '@chakra-ui/react';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 import { Pagination as PaginationType } from '@/types/customer.type';
+import { colors } from '@/theme/theme';
 
 type CustomerPaginationProps = {
   pagination: PaginationType | null;
@@ -10,7 +11,7 @@ type CustomerPaginationProps = {
 
 export const CustomerPagination = ({ pagination, currentPage, onPageChange }: CustomerPaginationProps) => {
   return (
-    <Box p={2} borderTop="1px solid" borderColor="gray.200">
+    <Box p={2} borderTop="1px solid" borderColor={colors.gray2}>
       <Pagination.Root
         count={pagination?.total ?? 0}
         pageSize={pagination?.limit ?? 10}
@@ -24,7 +25,14 @@ export const CustomerPagination = ({ pagination, currentPage, onPageChange }: Cu
             </IconButton>
           </Pagination.PrevTrigger>
           <Pagination.Items
-            render={(page) => <IconButton variant={{ base: 'ghost', _selected: 'outline' }}>{page.value}</IconButton>}
+            render={(page) => (
+              <IconButton
+                variant={{ base: 'ghost', _selected: 'outline' }}
+                bg={page.value === currentPage ? colors.gray2 : undefined}
+              >
+                {page.value}
+              </IconButton>
+            )}
           />
           <Pagination.NextTrigger asChild>
             <IconButton>

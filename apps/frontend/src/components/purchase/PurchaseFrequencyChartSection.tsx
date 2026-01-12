@@ -6,6 +6,7 @@ import { EMPTY_MESSAGES } from '@/constants/messages';
 import { PurchaseFrequency } from '@/types/purchase.type';
 import { purchaseUtils } from '@/utils/purchaseUtils';
 import { numberUtils } from '@/utils/numberUtils';
+import { colors } from '@/theme/theme';
 
 type PurchaseFrequencyChartSectionProps = {
   data: PurchaseFrequency[];
@@ -17,11 +18,11 @@ export const PurchaseFrequencyChartSection = ({ data }: PurchaseFrequencyChartSe
       range: purchaseUtils.formatPriceRange(item.range),
       count: item.count,
     })),
-    series: [{ name: 'count', color: 'blue.400', label: '구매 건수' }],
+    series: [{ name: 'count', color: colors.chart, label: '구매 건수' }],
   });
 
   return (
-    <Stack gap={4} p={6} bg="white">
+    <Stack gap={4} p={6} bg="white" borderRadius="md" boxShadow="xs">
       <Text fontSize="lg" fontWeight="semibold">
         가격대별 구매 빈도
       </Text>

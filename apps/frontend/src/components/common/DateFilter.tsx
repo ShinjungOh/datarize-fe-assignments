@@ -31,7 +31,6 @@ export const DateFilter = ({ from, to, onFromChange, onToChange, onSearch }: Dat
   };
 
   const handleSearch = () => {
-    console.log('검색:', { from, to });
     onSearch();
   };
 
