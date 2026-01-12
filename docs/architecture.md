@@ -24,3 +24,66 @@
 
 ### Date Picker
 - react-day-picker
+
+<br/>
+
+## 프로젝트 구조
+
+```
+src
+├── App.tsx
+├── main.tsx
+├── api
+│   ├── customer.api.test.ts
+│   ├── customer.api.ts
+│   ├── httpClient.ts
+│   ├── purchase.api.test.ts
+│   └── purchase.api.ts
+├── assets
+│   └── react.svg
+├── components
+│   ├── common
+│   │   ├── DateFilter.tsx
+│   │   ├── EmptyState.tsx
+│   │   ├── ErrorMessage.tsx
+│   │   ├── InfoBox.tsx
+│   │   └── LoadingSpinner.tsx
+│   ├── customer
+│   │   ├── CustomerListTable.tsx
+│   │   ├── CustomerPagination.tsx
+│   │   ├── CustomerPurchasesSection.tsx
+│   │   └── CustomerSearchSection.tsx
+│   ├── layout
+│   │   ├── Header.tsx
+│   │   ├── Layout.tsx
+│   │   ├── Main.tsx
+│   │   ├── Sidebar.tsx
+│   │   └── SubHeader.tsx
+│   └── purchase
+│       ├── PurchaseFrequencyChartSection.tsx
+│       └── PurchaseFrequencyTableSection.tsx
+├── constants
+│   ├── date.ts
+│   └── messages.ts
+├── hooks
+│   ├── useCustomerPurchases.ts
+│   ├── useCustomers.ts
+│   ├── useDateRange.ts
+│   └── usePurchaseFrequency.ts
+├── pages
+│   └── DashboardPage.tsx
+├── theme
+│   └── theme.ts
+├── types
+│   ├── customer.type.ts
+│   └── purchase.type.ts
+├── utils
+│   ├── csvUtils.ts
+│   ├── dateUtils.test.ts
+│   ├── dateUtils.ts
+│   ├── numberUtils.test.ts
+│   ├── numberUtils.ts
+│   ├── purchaseUtils.test.ts
+│   └── purchaseUtils.ts
+└── vite-env.d.ts
+```

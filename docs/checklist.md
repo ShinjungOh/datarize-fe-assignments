@@ -2,7 +2,7 @@
 
 ## 와이어프레임
 
-![dashboard-wireframe](./images/wireframe-v1.png)
+<img src="./images/wireframe-v1.png" alt="CSV 다운로드" width="500" />
 
 ## 개발 진행 단계
 
