@@ -18,7 +18,7 @@ export const PurchaseFrequencyChartSection = ({ data }: PurchaseFrequencyChartSe
       range: purchaseUtils.formatPriceRange(item.range),
       count: item.count,
     })),
-    series: [{ name: 'count', color: colors.chart, label: '구매 건수' }],
+    series: [{ name: 'count', color: colors.info, label: '구매 건수' }],
   });
 
   return (

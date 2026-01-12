@@ -14,6 +14,8 @@ export const useCustomers = ({ from, to }: UseCustomersParams) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchName, setSearchName] = useState('');
   const [sortBy, setSortBy] = useState<SortType>('id');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCustomers = async (page: number, name?: string, sort?: SortType) => {
     if (!from || !to) return;
@@ -22,16 +24,25 @@ export const useCustomers = ({ from, to }: UseCustomersParams) => {
 
     const sortValue = sort ?? sortBy;
 
-    const customersResponse = await getCustomers({
-      from: fromDateString,
-      to: toDateString,
-      sortBy: sortValue === 'id' ? undefined : sortValue,
-      name: name ?? (searchName || undefined),
-      page,
-    });
+    setIsLoading(true);
+    setError(null);
 
-    setCustomers(customersResponse.data);
-    setPagination(customersResponse.pagination);
+    try {
+      const customersResponse = await getCustomers({
+        from: fromDateString,
+        to: toDateString,
+        sortBy: sortValue === 'id' ? undefined : sortValue,
+        name: name ?? (searchName || undefined),
+        page,
+      });
+
+      setCustomers(customersResponse.data);
+      setPagination(customersResponse.pagination);
+    } catch {
+      setError('고객 목록을 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleNameSearch = () => {
@@ -60,6 +71,8 @@ export const useCustomers = ({ from, to }: UseCustomersParams) => {
     currentPage,
     searchName,
     sortBy,
+    isLoading,
+    error,
     fetchCustomers,
     handleNameSearch,
     handleSort,

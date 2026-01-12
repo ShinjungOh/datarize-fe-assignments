@@ -11,6 +11,8 @@ type UseCustomerPurchasesParams = {
 export const useCustomerPurchases = ({ from, to }: UseCustomerPurchasesParams) => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
   const [customerPurchases, setCustomerPurchases] = useState<CustomerPurchase[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCustomerClick = async (customerId: number) => {
     if (!from || !to) return;
@@ -18,13 +20,21 @@ export const useCustomerPurchases = ({ from, to }: UseCustomerPurchasesParams) =
     const toDateString = dateUtils.formatDate(to);
 
     setSelectedCustomerId(customerId);
+    setIsLoading(true);
+    setError(null);
 
-    const purchasesResponse = await getCustomersPurchases(customerId, {
-      from: fromDateString,
-      to: toDateString,
-    });
+    try {
+      const purchasesResponse = await getCustomersPurchases(customerId, {
+        from: fromDateString,
+        to: toDateString,
+      });
 
-    setCustomerPurchases(purchasesResponse);
+      setCustomerPurchases(purchasesResponse);
+    } catch {
+      setError('구매 내역을 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleThumbnailClick = (imgSrc: string) => {
@@ -39,6 +49,8 @@ export const useCustomerPurchases = ({ from, to }: UseCustomerPurchasesParams) =
   return {
     selectedCustomerId,
     customerPurchases,
+    isLoading,
+    error,
     handleCustomerClick,
     handleThumbnailClick,
     handleBackClick,

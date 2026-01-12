@@ -11,10 +11,21 @@ type UsePurchaseFrequencyParams = {
 
 export const usePurchaseFrequency = ({ from, to }: UsePurchaseFrequencyParams) => {
   const [data, setData] = useState<PurchaseFrequency[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = async ({ from, to }: { from: string; to: string }) => {
-    const response = await getPurchaseFrequency({ from, to });
-    setData(response);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await getPurchaseFrequency({ from, to });
+      setData(response);
+    } catch {
+      setError('구매 빈도 데이터를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDownloadCsv = async () => {
@@ -29,6 +40,8 @@ export const usePurchaseFrequency = ({ from, to }: UsePurchaseFrequencyParams) =
 
   return {
     data,
+    isLoading,
+    error,
     fetchData,
     handleDownloadCsv,
   };

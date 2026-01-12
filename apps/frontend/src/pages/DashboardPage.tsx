@@ -5,6 +5,8 @@ import { SubHeader } from '@/components/layout/SubHeader';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Main } from '@/components/layout/Main';
 import { DateFilter } from '@/components/common/DateFilter';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { ErrorMessage } from '@/components/common/ErrorMessage';
 import { CustomerSearchSection } from '@/components/customer/CustomerSearchSection';
 import { CustomerListTable } from '@/components/customer/CustomerListTable';
 import { CustomerPagination } from '@/components/customer/CustomerPagination';
@@ -26,6 +28,8 @@ export const DashboardPage = () => {
 
   const {
     data: purchaseFrequencyData,
+    isLoading: isPurchaseFrequencyLoading,
+    error: purchaseFrequencyError,
     fetchData: fetchPurchaseFrequency,
     handleDownloadCsv,
   } = usePurchaseFrequency({ from, to });
@@ -36,6 +40,8 @@ export const DashboardPage = () => {
     currentPage,
     searchName,
     sortBy,
+    isLoading: isCustomersLoading,
+    error: customersError,
     fetchCustomers,
     handleNameSearch,
     handleSort,
@@ -43,11 +49,18 @@ export const DashboardPage = () => {
     handleSearchNameChange,
   } = useCustomers({ from, to });
 
-  const { selectedCustomerId, customerPurchases, handleCustomerClick, handleThumbnailClick, handleBackClick } =
-    useCustomerPurchases({
-      from,
-      to,
-    });
+  const {
+    selectedCustomerId,
+    customerPurchases,
+    isLoading: isCustomerPurchasesLoading,
+    error: customerPurchasesError,
+    handleCustomerClick,
+    handleThumbnailClick,
+    handleBackClick,
+  } = useCustomerPurchases({
+    from,
+    to,
+  });
 
   const handleSearch = async () => {
     if (!from || !to) return;
@@ -76,31 +89,43 @@ export const DashboardPage = () => {
             onNameSearch={handleNameSearch}
             onSort={handleSort}
           />
-          <CustomerListTable
-            customers={customers}
-            pagination={pagination}
-            searchName={searchName}
-            onCustomerClick={handleCustomerClick}
-          />
+          {isCustomersLoading && <LoadingSpinner />}
+          {!isCustomersLoading && customersError && <ErrorMessage message={customersError} />}
+          {!isCustomersLoading && !customersError && (
+            <CustomerListTable
+              customers={customers}
+              pagination={pagination}
+              searchName={searchName}
+              onCustomerClick={handleCustomerClick}
+            />
+          )}
           <CustomerPagination pagination={pagination} currentPage={currentPage} onPageChange={handlePageChange} />
         </Sidebar>
         <Main>
-          <Stack gap={4}>
-            {selectedCustomerId ? (
-              <CustomerPurchasesSection
-                customerId={selectedCustomerId}
-                customerName={customers.find((customer) => customer.id === selectedCustomerId)?.name ?? ''}
-                data={customerPurchases}
-                onThumbnailClick={handleThumbnailClick}
-                onBackClick={handleBackClick}
-              />
-            ) : (
-              <>
-                <PurchaseFrequencyChartSection data={purchaseFrequencyData} />
-                <PurchaseFrequencyTableSection data={purchaseFrequencyData} onDownloadCsv={handleDownloadCsv} />
-              </>
-            )}
-          </Stack>
+          {selectedCustomerId && isCustomerPurchasesLoading && <LoadingSpinner />}
+          {selectedCustomerId && !isCustomerPurchasesLoading && customerPurchasesError && (
+            <ErrorMessage message={customerPurchasesError} />
+          )}
+          {selectedCustomerId && !isCustomerPurchasesLoading && !customerPurchasesError && (
+            <CustomerPurchasesSection
+              customerId={selectedCustomerId}
+              customerName={customers.find((customer) => customer.id === selectedCustomerId)?.name ?? ''}
+              data={customerPurchases}
+              onThumbnailClick={handleThumbnailClick}
+              onBackClick={handleBackClick}
+            />
+          )}
+
+          {!selectedCustomerId && isPurchaseFrequencyLoading && <LoadingSpinner />}
+          {!selectedCustomerId && !isPurchaseFrequencyLoading && purchaseFrequencyError && (
+            <ErrorMessage message={purchaseFrequencyError} />
+          )}
+          {!selectedCustomerId && !isPurchaseFrequencyLoading && !purchaseFrequencyError && (
+            <Stack gap={4}>
+              <PurchaseFrequencyChartSection data={purchaseFrequencyData} />
+              <PurchaseFrequencyTableSection data={purchaseFrequencyData} onDownloadCsv={handleDownloadCsv} />
+            </Stack>
+          )}
         </Main>
       </Box>
     </Layout>
