@@ -1,5 +1,7 @@
+import { DashboardPage } from '@/pages/DashboardPage.tsx';
+
 const App = () => {
-  return 'Hello';
+  return <DashboardPage />;
 };
 
 export default App;
