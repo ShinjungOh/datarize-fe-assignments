@@ -7,9 +7,10 @@ import { Main } from '@/components/layout/Main';
 import { DateFilter } from '@/components/common/DateFilter';
 import { PurchaseFrequencyChartSection } from '@/components/purchase/PurchaseFrequencyChartSection';
 import { useDateRange } from '@/hooks/useDateRange';
-import { getPurchaseFrequency } from '@/api/purchase.api';
+import { getPurchaseFrequency, getPurchases } from '@/api/purchase.api';
 import { PurchaseFrequency } from '@/types/purchase.type';
 import { dateUtils } from '@/utils/dateUtils';
+import { csvUtils } from '@/utils/csvUtils';
 import { PurchaseFrequencyTableSection } from '@/components/purchase/PurchaseFrequencyTableSection';
 
 export const DashboardPage = () => {
@@ -28,6 +29,19 @@ export const DashboardPage = () => {
     setPurchaseFrequencyData(responsePurchaseFrequency);
   };
 
+  const handleDownloadCsv = async () => {
+    if (!from || !to) return;
+
+    const fromString = dateUtils.formatDate(from);
+    const toString = dateUtils.formatDate(to);
+
+    const purchases = await getPurchases({ from: fromString, to: toString });
+    const csvContent = csvUtils.generatePurchasesCsv(purchases);
+    const filename = csvUtils.generateCsvFilename(fromString, toString);
+
+    csvUtils.downloadCsv(csvContent, filename);
+  };
+
   return (
     <Layout>
       <SubHeader title="대시보드">
@@ -38,7 +52,7 @@ export const DashboardPage = () => {
         <Main>
           <Stack gap={4}>
             <PurchaseFrequencyChartSection data={purchaseFrequencyData} />
-            <PurchaseFrequencyTableSection data={purchaseFrequencyData} />
+            <PurchaseFrequencyTableSection data={purchaseFrequencyData} onDownloadCsv={handleDownloadCsv} />
           </Stack>
         </Main>
       </Box>
