@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Box, Stack } from '@chakra-ui/react';
 import { Layout } from '@/components/layout/Layout';
 import { SubHeader } from '@/components/layout/SubHeader';
@@ -9,13 +10,19 @@ import { CustomerListTable } from '@/components/customer/CustomerListTable';
 import { CustomerPagination } from '@/components/customer/CustomerPagination';
 import { PurchaseFrequencyChartSection } from '@/components/purchase/PurchaseFrequencyChartSection';
 import { PurchaseFrequencyTableSection } from '@/components/purchase/PurchaseFrequencyTableSection';
+import { CustomerDetailsSection } from '@/components/customer/CustomerDetailsSection';
 import { useDateRange } from '@/hooks/useDateRange';
 import { usePurchaseFrequency } from '@/hooks/usePurchaseFrequency';
 import { useCustomers } from '@/hooks/useCustomers';
 import { dateUtils } from '@/utils/dateUtils';
 import { DEFAULT_FROM_DATE, DEFAULT_TO_DATE } from '@/constants/date';
+import { getCustomersPurchases } from '@/api/customer.api';
+import { CustomerPurchase } from '@/types/customer.type';
 
 export const DashboardPage = () => {
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
+  const [customerPurchases, setCustomerPurchases] = useState<CustomerPurchase[]>([]);
+
   const { from, to, setFrom, setTo } = useDateRange({
     initialFrom: DEFAULT_FROM_DATE,
     initialTo: DEFAULT_TO_DATE,
@@ -49,6 +56,25 @@ export const DashboardPage = () => {
     await fetchCustomers(1);
   };
 
+  const handleCustomerClick = async (customerId: number) => {
+    if (!from || !to) return;
+    const fromDateString = dateUtils.formatDate(from);
+    const toDateString = dateUtils.formatDate(to);
+
+    setSelectedCustomerId(customerId);
+
+    const purchasesResponse = await getCustomersPurchases(customerId, {
+      from: fromDateString,
+      to: toDateString,
+    });
+
+    setCustomerPurchases(purchasesResponse);
+  };
+
+  const handleThumbnailClick = (imgSrc: string) => {
+    window.open(imgSrc, '_blank');
+  };
+
   return (
     <Layout>
       <SubHeader title="대시보드">
@@ -63,13 +89,23 @@ export const DashboardPage = () => {
             onNameSearch={handleNameSearch}
             onSort={handleSort}
           />
-          <CustomerListTable customers={customers} pagination={pagination} />
+          <CustomerListTable customers={customers} pagination={pagination} onCustomerClick={handleCustomerClick} />
           <CustomerPagination pagination={pagination} currentPage={currentPage} onPageChange={handlePageChange} />
         </Sidebar>
         <Main>
           <Stack gap={4}>
-            <PurchaseFrequencyChartSection data={purchaseFrequencyData} />
-            <PurchaseFrequencyTableSection data={purchaseFrequencyData} onDownloadCsv={handleDownloadCsv} />
+            {selectedCustomerId ? (
+              <CustomerDetailsSection
+                customerId={selectedCustomerId}
+                data={customerPurchases}
+                onThumbnailClick={handleThumbnailClick}
+              />
+            ) : (
+              <>
+                <PurchaseFrequencyChartSection data={purchaseFrequencyData} />
+                <PurchaseFrequencyTableSection data={purchaseFrequencyData} onDownloadCsv={handleDownloadCsv} />
+              </>
+            )}
           </Stack>
         </Main>
       </Box>
