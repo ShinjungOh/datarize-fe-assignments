@@ -3,6 +3,8 @@ export type CustomersParams = {
   name?: string;
   page?: number;
   limit?: number;
+  from?: string;
+  to?: string;
 };
 
 export type Customer = {

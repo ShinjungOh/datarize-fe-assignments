@@ -7,7 +7,7 @@ type SidebarProps = {
 
 export const Sidebar = ({ children }: SidebarProps) => {
   return (
-    <Box as="aside" w="360px" display="flex" flexDirection="column" overflow="hidden" borderRight="1px solid black">
+    <Box as="aside" w="360px" display="flex" flexDirection="column" overflow="auto" borderRight="1px solid black">
       {children}
     </Box>
   );
