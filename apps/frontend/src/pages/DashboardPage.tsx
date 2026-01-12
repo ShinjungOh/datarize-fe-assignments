@@ -12,9 +12,19 @@ import { dateUtils } from '@/utils/dateUtils';
 import { purchaseUtils } from '@/utils/purchaseUtils';
 import { numberUtils } from '@/utils/numberUtils';
 import { Stack, Table } from '@chakra-ui/react';
+import { Chart, useChart } from '@chakra-ui/charts';
+import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
 
 export const DashboardPage = () => {
   const [purchaseFrequencyData, setPurchaseFrequencyData] = useState<PurchaseFrequency[]>([]);
+
+  const chart = useChart({
+    data: purchaseFrequencyData.map((item) => ({
+      range: purchaseUtils.formatPriceRange(item.range),
+      count: item.count,
+    })),
+    series: [{ name: 'count', color: 'blue.400', label: '구매 건수' }],
+  });
 
   const { from, to, setFrom, setTo } = useDateRange({
     initialFrom: '2025-10-01',
@@ -37,26 +47,57 @@ export const DashboardPage = () => {
       <Box display="flex" flex={1} overflow="hidden">
         <Sidebar>고객 목록</Sidebar>
         <Main>
-          {/* TODO 테이블 컴포넌트 분리*/}
-          <Stack gap={2} p={2}>
-            <Text>상세 데이터</Text>
-            <Stack gap="10">
-              <Table.Root size="sm" variant="line">
-                <Table.Header>
-                  <Table.Row bg="gray.50">
-                    <Table.ColumnHeader>가격대</Table.ColumnHeader>
-                    <Table.ColumnHeader textAlign="end">구매 건수</Table.ColumnHeader>
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {purchaseFrequencyData.map((item) => (
-                    <Table.Row key={item.range}>
-                      <Table.Cell>{purchaseUtils.formatPriceRange(item.range)}</Table.Cell>
-                      <Table.Cell textAlign="end">{numberUtils.formatNumber(item.count)}</Table.Cell>
-                    </Table.Row>
+          <Stack gap={4}>
+            {/* TODO 차트 컴포넌트 분리*/}
+            <Stack gap={4} p={6} bg="white">
+              <Text fontSize="lg" fontWeight="semibold">
+                가격대별 구매 빈도
+              </Text>
+              <Chart.Root maxH="sm" chart={chart}>
+                <BarChart data={chart.data}>
+                  <CartesianGrid stroke={chart.color('border.muted')} vertical={false} />
+                  <XAxis axisLine={false} tickLine={false} dataKey={chart.key('range')} />
+                  <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => numberUtils.formatNumber(value)} />
+                  <Tooltip
+                    cursor={{ fill: chart.color('bg.muted') }}
+                    animationDuration={0}
+                    content={<Chart.Tooltip />}
+                  />
+                  {chart.series.map((item) => (
+                    <Bar
+                      isAnimationActive={false}
+                      key={item.name}
+                      dataKey={chart.key(item.name)}
+                      fill={chart.color(item.color)}
+                    />
                   ))}
-                </Table.Body>
-              </Table.Root>
+                </BarChart>
+              </Chart.Root>
+            </Stack>
+
+            {/* TODO 테이블 컴포넌트 분리*/}
+            <Stack gap={4} p={6} bg="white">
+              <Text fontSize="lg" fontWeight="semibold">
+                상세 데이터
+              </Text>
+              <Stack gap="10">
+                <Table.Root size="sm" variant="line">
+                  <Table.Header>
+                    <Table.Row bg="gray.50">
+                      <Table.ColumnHeader>가격대</Table.ColumnHeader>
+                      <Table.ColumnHeader textAlign="end">구매 건수</Table.ColumnHeader>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
+                    {purchaseFrequencyData.map((item) => (
+                      <Table.Row key={item.range}>
+                        <Table.Cell>{purchaseUtils.formatPriceRange(item.range)}</Table.Cell>
+                        <Table.Cell textAlign="end">{numberUtils.formatNumber(item.count)}</Table.Cell>
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table.Root>
+              </Stack>
             </Stack>
           </Stack>
         </Main>

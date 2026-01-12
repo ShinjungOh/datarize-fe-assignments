@@ -7,7 +7,7 @@ type MainProps = {
 
 export const Main = ({ children }: MainProps) => {
   return (
-    <Box as="main" flex={1} overflow="auto" p={6}>
+    <Box as="main" flex={1} overflow="auto" p={6} bg="gray.50">
       {children}
     </Box>
   );
