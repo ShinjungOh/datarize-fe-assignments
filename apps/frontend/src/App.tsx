@@ -1,4 +1,4 @@
-import { DashboardPage } from '@/pages/DashboardPage.tsx';
+import { DashboardPage } from '@/pages/DashboardPage';
 
 const App = () => {
   return <DashboardPage />;
